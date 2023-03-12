@@ -1,0 +1,50 @@
+name: Angluar CI with Npm
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'release/**'
+      - 'feature/**'
+      - 'issue/**'
+      - 'bug/**'
+  pull_request:
+    branches:
+      - 'main'
+      - 'release/**'
+
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_test_release:
+    permissions:
+      actions: write
+      contents: write
+
+    strategy:
+      matrix:
+        node-version: ['14','16']
+        os: ['ubuntu-latest']
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: use Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: install
+        run: npm install
+      - name: build
+        run: npm run build
+      - name: test
+        run: npm run test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          CI: true
