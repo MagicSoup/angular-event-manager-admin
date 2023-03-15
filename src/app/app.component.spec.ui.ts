@@ -2,8 +2,6 @@ import {AppComponent} from './app.component';
 import {render, screen} from "@testing-library/angular";
 
 describe('AppComponent', () => {
-  beforeEach(async () => {
-  });
 
   it('angular testing-librairy : should create the app', async () => {
     // render
